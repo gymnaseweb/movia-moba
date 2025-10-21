@@ -78,5 +78,42 @@ class Blocks {
       ],
       'align'           => 'full',
     ]);
+
+      acf_register_block_type([
+      'name'            => 'home-countdown',
+      'title'           => __('Home - Countdown', 'movia'),
+      'category'        => 'layout',
+      'icon'            => 'calendar',
+      'mode'            => 'preview',
+      'render_template' => get_theme_file_path('blocks/home-countdown.php'),
+      'supports'        => [
+        'align' => ['full', 'wide'],
+      ],
+      'align'           => 'full',
+    ]);
+          acf_register_block_type([
+      'name'            => 'home-testimonials',
+      'title'           => __('Home - Testimonials', 'movia'),
+      'category'        => 'layout',
+      'icon'            => 'calendar',
+      'mode'            => 'preview',
+      'render_template' => get_theme_file_path('blocks/home-testimonials.php'),
+      'supports'        => [
+        'align' => ['full', 'wide'],
+      ],
+      'align'           => 'full',
+    ]);
+              acf_register_block_type([
+      'name'            => 'home-news',
+      'title'           => __('Home - News', 'movia'),
+      'category'        => 'layout',
+      'icon'            => 'calendar',
+      'mode'            => 'preview',
+      'render_template' => get_theme_file_path('blocks/home-news.php'),
+      'supports'        => [
+        'align' => ['full', 'wide'],
+      ],
+      'align'           => 'full',
+    ]);
   }
 }

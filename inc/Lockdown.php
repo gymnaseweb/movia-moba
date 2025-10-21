@@ -16,6 +16,9 @@ class Lockdown {
       'acf/home-about',
       'acf/home-services',
       'acf/home-events',
+      'acf/home-countdown',
+      'acf/home-testimonials',
+      'acf/home-news',
     ];
 
     // If we don't have a post context, keep default.
