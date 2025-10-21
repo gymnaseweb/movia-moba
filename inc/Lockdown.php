@@ -8,11 +8,30 @@ class Lockdown {
     }
   }
 
+  // Use the modern, non-deprecated filter and gate by post type.
   public static function allowed_blocks($allowed, $context) {
-    return [
+    // Default allow-list (pages, etc.)
+    $default = [
       'acf/hero',
-      'acf/about',
+      'acf/home-about',
+      'acf/home-services',
+      'acf/home-events',
     ];
+
+    // If we don't have a post context, keep default.
+    if (empty($context->post)) {
+      return $default;
+    }
+
+    // Events CPT: only allow the Event single block (and anything else you want there).
+    if ($context->post->post_type === 'event') {
+      return [
+        'acf/event-single',
+      ];
+    }
+
+    // Everything else
+    return $default;
   }
 
   public static function remove_editor_unfiltered_html() {

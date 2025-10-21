@@ -38,3 +38,16 @@ add_action('wp_enqueue_scripts', function () {
     ['in_footer' => true, 'strategy' => 'defer']
   );
 });
+
+add_filter('register_post_type_args', function ($args, $post_type) {
+  if ($post_type !== 'event') return $args;
+
+  $args['template'] = [
+    ['acf/event-single', ['align' => 'full'], []],
+  ];
+  $args['template_lock'] = 'all'; 
+
+  $args['show_in_rest'] = true;
+
+  return $args;
+}, 10, 2);
