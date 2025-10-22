@@ -220,23 +220,47 @@ ul{
     letter-spacing: 12px;
 }
 
-.dropdown_menu{
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    transform: translateY(-100%);
-    transition: all 1s ease-in;
-    z-index: 99;
-    /* background-color: #fff; */
+.menu-button {
+  grid-column-gap: .1875em;
+  grid-row-gap: .1875em;
+  flex-flow: column;
+  padding: 1em;
+  font-size: 1em;
+  display: flex;
+  background: transparent;
+  -webkit-appearance: none;
+  border: none;
 }
-.main_header.menu_open .dropdown_menu{
-    transform: translateY(0);
+
+.menu-button-line {
+  background-color: #e7dddb;
+  width: 2em;
+  height: .1875em;
 }
-.dropdown_menu li{
-    border-bottom: 2px solid #000;
-    background-color: #fff;
-    transition: all 0.5s;
+
+.dropdown_menu {
+    height:0;
+}
+
+.dropdown_menu ul {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  height: 0;
+  opacity: 1;              /* start hidden; JS animates to 1 */
+  z-index: 999;
+  background-color: #fff;
+}
+
+.dropdown_menu ul li:first-child {
+  padding-top:20px;
+}
+
+.dropdown_menu li {
+  border-bottom: 2px solid #000;
+  transition: all 0.5s;
+  opacity: 0;
 }
 .dropdown_menu li:hover{
     background-color: #050505;
@@ -247,10 +271,12 @@ ul{
     font-weight: 500;
     line-height: 1.5;
     display: block;
-    max-width: 1065px;
-    margin: 0 auto;
+    margin-left:19vw;
     padding: 0 20px;
     position: relative;
+    white-space: nowrap;        /* no wrapping */
+    overflow: hidden;           /* hide overflow */
+    text-overflow: ellipsis; 
 }
 .dropdown_menu li a:before{
     content: '';
@@ -260,9 +286,44 @@ ul{
     transform: translate(-50%, -50%);
     width: 72px;
     height: 72px;
-    background-color: #fff;
     border-radius: 50%;
 }
+
+/* Tunables */
+:root {
+  --menu-rows: 7;         /* will be overridden by JS */
+  --vpad: 40px;           /* vertical padding on the UL (top+bottom) */
+  --row-gap: 0px;         /* gap between rows */
+  --lh: 1.2;              /* line-height multiplier */
+}
+/* Each LI acts as a row */
+.dropdown_menu .animated_menu > li {
+  flex: 1 1 0;                  /* equal-height rows */
+  display: flex;
+  align-items: center;          /* vertically center text in its row */
+}
+
+/* Text sizing formula: fit all rows in available height */
+.dropdown_menu .animated_menu > li > a {
+  display: block;
+  width: 100%;
+  line-height: var(--lh);
+  /* available height / (rows * line-height) */
+  font-size: calc(
+    (100vh - 117px - 20px - (var(--vpad) * 2) - ((var(--menu-rows) - 1) * var(--row-gap)))
+    / (var(--menu-rows) * var(--lh))
+  );
+  /* Optional clamp to avoid absurd sizes on ultra-wide screens */
+  font-size: clamp(20px, 
+    calc(
+      (100vh - 117px - 20px - (var(--vpad) * 2) - ((var(--menu-rows) - 1) * var(--row-gap)))
+      / (var(--menu-rows) * var(--lh))
+    ),
+    14vw
+  );
+}
+
+
 .dropdown_menu li:hover a{
     color: #fff;
 }
