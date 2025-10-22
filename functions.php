@@ -37,6 +37,22 @@ add_action('wp_enqueue_scripts', function () {
     null,
     ['in_footer' => true, 'strategy' => 'defer']
   );
+
+    if (is_page('projets') || is_page_template('page-projets.php')) {
+        $handle   = 'page-projects';
+        $rel_path = '/assets/js/page-projects.js';
+        $src      = get_stylesheet_directory_uri() . $rel_path;
+        $path     = get_stylesheet_directory() . $rel_path;
+
+        wp_enqueue_script(
+        $handle,
+        $src,
+        [],                                // add deps here if needed, e.g. ['jquery']
+        file_exists($path) ? filemtime($path) : null, // cache-bust on changes
+        true                               // load in footer
+        );
+    }
+
 });
 
 add_filter('register_post_type_args', function ($args, $post_type) {
