@@ -3207,3 +3207,7 @@ ul{
     width: 100%;
   }
 }
+
+.visually-hidden{ position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); }
+.div_trouvez a[data-filter-status="active"]{ text-decoration:underline; /* ou ton style actif */ }
+

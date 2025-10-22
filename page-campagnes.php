@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Projects 
+ * Template Name: Campagnes et événements
  */
 defined('ABSPATH') || exit;
 
@@ -15,18 +15,21 @@ get_header();
   </div>
 
 <?php
-// ---- Config
+// ---- Single filter taxonomy
 $filters = [
-  'projects-type'          => __('Type de projet', 'your-textdomain'),
-  'projects-type-audience' => __('Type de clientèle', 'your-textdomain'),
-  'projects-types-area'    => __('Territoire', 'your-textdomain'),
+  'event_type' => __('Type d’événement', 'your-textdomain'),
 ];
 
-// Helper image
-function movia_get_project_image_html($post_id) {
-  $img = get_field('project_image_1', $post_id);
-  $fallback_alt = get_the_title($post_id);
+// ---- Event image helper (featured image > ACF event_image > placeholder)
+function movia_get_event_image_html($post_id) {
+  // 1) Featured image first
+  if (has_post_thumbnail($post_id)) {
+    return get_the_post_thumbnail($post_id, 'large', ['loading' => 'lazy']);
+  }
 
+  // 2) Fallback to ACF event_image (array | ID | URL)
+  $img = get_field('event_image', $post_id);
+  $fallback_alt = get_the_title($post_id);
   $src = '';
   $alt = $fallback_alt;
 
@@ -45,6 +48,7 @@ function movia_get_project_image_html($post_id) {
     return sprintf('<img src="%s" alt="%s" loading="lazy" />', esc_url($src), esc_attr($alt));
   }
 
+  // 3) Placeholder
   $ph = get_template_directory_uri() . '/img/projet/placeholder.jpg';
   return '<img src="'.esc_url($ph).'" alt="" loading="lazy" />';
 }
@@ -53,9 +57,9 @@ function movia_get_project_image_html($post_id) {
 <section class="sec_filter_nos">
   <div class="max_container div_filter_nos">
 
-    <!-- One group per taxonomy, each with its own “Tous”. All buttons point to the same list via aria-controls -->
-    <?php foreach ($filters as $tax => $label): ?>
-      <?php
+    <?php
+    // --- Render the single taxonomy filter group with a "Tous" button
+    foreach ($filters as $tax => $label):
       $terms = get_terms([
         'taxonomy'   => $tax,
         'hide_empty' => false,
@@ -63,7 +67,7 @@ function movia_get_project_image_html($post_id) {
         'order'      => 'ASC',
       ]);
       if (is_wp_error($terms) || empty($terms)) continue;
-      ?>
+    ?>
       <div class="div_filtres filter-group"
            data-filter-group
            data-filter-target-match="multi"
@@ -84,7 +88,6 @@ function movia_get_project_image_html($post_id) {
           </button>
 
           <?php foreach ($terms as $term): ?>
-            <?php $icon = get_field('cat_icon', $term); // optional ACF SVG textarea ?>
             <button type="button"
                     class="filter-btn"
                     data-filter-target="<?php echo esc_attr($term->slug); ?>"
@@ -92,7 +95,6 @@ function movia_get_project_image_html($post_id) {
                     aria-pressed="false"
                     aria-controls="filter-list"
                     title="<?php echo esc_attr(sprintf(__('Voir %s', 'your-textdomain'), $term->name)); ?>">
-              <?php if ($icon) echo $icon; ?>
               <span><?php echo esc_html($term->name); ?></span>
             </button>
           <?php endforeach; ?>
@@ -101,23 +103,26 @@ function movia_get_project_image_html($post_id) {
     <?php endforeach; ?>
 
     <?php
-    // Build the query (no server-side tax filtering — client-side only)
+    // --- Build the query (client-side filtering only)
     $paged = max(1, get_query_var('paged') ?: get_query_var('page') ?: 1);
     $q = new WP_Query([
-      'post_type'      => 'projects',
+      'post_type'      => 'event',
       'post_status'    => 'publish',
       'posts_per_page' => 12,
       'paged'          => $paged,
+      'orderby'        => ['date' => 'DESC', 'title' => 'ASC'],
     ]);
     ?>
 
     <div class="filter-list grid_projets_boxes" role="list" id="filter-list">
       <?php if ($q->have_posts()): ?>
         <?php
-        $tax_names = array_keys($filters);
+        $tax_names = array_keys($filters); // ['event_type']
         while ($q->have_posts()): $q->the_post();
           $permalink = get_permalink();
-          $img_html  = movia_get_project_image_html(get_the_ID());
+          $img_html  = movia_get_event_image_html(get_the_ID());
+
+          // Collect only event_type terms
           $terms_by_tax = [];
           foreach ($tax_names as $tname) {
             $terms_by_tax[$tname] = get_the_terms(get_the_ID(), $tname);
@@ -151,7 +156,7 @@ function movia_get_project_image_html($post_id) {
               </a>
             </div>
 
-            <!-- Hidden collectors; JS aggregates these into data-filter-name -->
+            <!-- Hidden collectors: JS aggregates slugs into data-filter-name -->
             <div class="visually-hidden">
               <?php
               foreach ($tax_names as $tname) {
@@ -166,12 +171,12 @@ function movia_get_project_image_html($post_id) {
           </div>
         <?php endwhile; wp_reset_postdata(); ?>
       <?php else: ?>
-        <p><?php esc_html_e('Aucun projet ne correspond.', 'your-textdomain'); ?></p>
+        <p><?php esc_html_e('Aucun événement ne correspond.', 'your-textdomain'); ?></p>
       <?php endif; ?>
     </div>
 
     <?php
-    // Pagination (client-side filters apply per page)
+    // --- Pagination (preserves client-side UX per page)
     $total_pages = $q->max_num_pages;
     if ($total_pages > 1) {
       $big = 999999999;
@@ -200,7 +205,6 @@ function movia_get_project_image_html($post_id) {
   position:absolute!important; width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
-
 /* Item visibility + small fade */
 .filter-list [data-filter-status="active"]{
   display:block;
@@ -211,11 +215,9 @@ function movia_get_project_image_html($post_id) {
   display:block;
   opacity:0; transform:scale(0.98); pointer-events:none; transition:opacity .25s ease, transform .25s ease;
 }
-
 /* Button active state hooks */
 .filter-btn[data-filter-status="active"]{ /* style active */ }
 .filter-btn[data-filter-status="not-active"]{ /* style idle */ }
-
 .div_filtres{ margin-bottom:1rem; }
 .filter-buttons{ display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; }
 .div_filtres > p{ font-weight:600; margin:.25rem 0 .5rem; }
@@ -223,26 +225,21 @@ function movia_get_project_image_html($post_id) {
 
 <script>
 /**
- * Multi-group filter with per-group “Tous”.
- * – Each .filter-group controls the same shared list (#filter-list via aria-controls).
- * – Clicking buttons in any group updates a shared state; an item is shown if it satisfies ALL groups that have active selections.
- * – Within a group:
- *     data-filter-name-match="multi" -> OR within that group (any selected tag in that group matches)
- *     data-filter-name-match="single" -> AND within that group (must contain all selected tags from that group)
- * – data-filter-target-match="single|multi" controls if the group is radio-like or multi-select (kept from your original API).
+ * Single-group filter (event_type) with “Tous”.
+ * – Uses the same multi-group engine; only one group is present here.
+ * – OR logic within the group (data-filter-name-match="multi").
  * – Transition-out supported via data-filter-status="transition-out".
  */
 (function(){
   const transitionDelay = 300;
 
-  // Resolve the shared list once
+  // Resolve the list
   const list = document.getElementById('filter-list') || document.querySelector('[role="list"]');
   if (!list) return;
 
-  // All items
   const items = [...list.querySelectorAll('[data-filter-name]')];
 
-  // Collect tokens from children once, populate data-filter-name
+  // Populate data-filter-name from collectors
   items.forEach(item => {
     const collectors = item.querySelectorAll('[data-filter-name-collect]');
     if (!collectors.length) return;
@@ -254,7 +251,7 @@ function movia_get_project_image_html($post_id) {
     if (tokens.length) item.setAttribute('data-filter-name', tokens.join(' '));
   });
 
-  // Cache item tokens
+  // Cache tokens
   const itemTokens = new Map();
   items.forEach(el => {
     const raw = (el.getAttribute('data-filter-name') || '').trim().toLowerCase();
@@ -262,7 +259,6 @@ function movia_get_project_image_html($post_id) {
     itemTokens.set(el, new Set(tokens));
   });
 
-  // Utility to set item state with aria
   const setItemState = (el, on) => {
     const next = on ? 'active' : 'not-active';
     if (el.getAttribute('data-filter-status') !== next) {
@@ -271,7 +267,6 @@ function movia_get_project_image_html($post_id) {
     }
   };
 
-  // Utility to set button state with aria
   const setButtonState = (btn, on) => {
     const next = on ? 'active' : 'not-active';
     if (btn.getAttribute('data-filter-status') !== next) {
@@ -280,28 +275,16 @@ function movia_get_project_image_html($post_id) {
     }
   };
 
-  // One model per group; keep them together for global recompute
+  // Build the single group
   const groups = [...document.querySelectorAll('[data-filter-group]')].map(group => {
-    const targetMatch = (group.getAttribute('data-filter-target-match') || 'multi').trim().toLowerCase(); // 'single'|'multi'
-    const nameMatch   = (group.getAttribute('data-filter-name-match')   || 'multi').trim().toLowerCase(); // 'single'|'multi'
+    const targetMatch = (group.getAttribute('data-filter-target-match') || 'multi').trim().toLowerCase(); // 'multi'
+    const nameMatch   = (group.getAttribute('data-filter-name-match')   || 'multi').trim().toLowerCase(); // 'multi'
     const buttons     = [...group.querySelectorAll('[data-filter-target]')];
 
-    // Group state
-    let activeTags = targetMatch === 'single' ? null : new Set(['all']);
+    let activeTags = new Set(['all']); // start as "Tous"
 
-    const hasRealActive = () => {
-      if (targetMatch === 'single') return activeTags !== null;
-      return activeTags.size > 0 && !activeTags.has('all');
-    };
-
-    const resetAll = () => {
-      if (targetMatch === 'single') {
-        activeTags = null;
-      } else {
-        activeTags.clear();
-        activeTags.add('all');
-      }
-    };
+    const hasRealActive = () => activeTags.size > 0 && !activeTags.has('all');
+    const resetAll = () => { activeTags.clear(); activeTags.add('all'); };
 
     const toggleTarget = (rawTarget) => {
       const target = (rawTarget || '').trim().toLowerCase();
@@ -309,8 +292,6 @@ function movia_get_project_image_html($post_id) {
 
       if (target === 'all' || target === 'reset') {
         resetAll();
-      } else if (targetMatch === 'single') {
-        activeTags = target;
       } else {
         if (activeTags.has('all')) activeTags.delete('all');
         if (activeTags.has(target)) activeTags.delete(target);
@@ -318,13 +299,13 @@ function movia_get_project_image_html($post_id) {
         if (activeTags.size === 0) resetAll();
       }
 
-      // Update buttons visual state for this group
+      // Update button states
       buttons.forEach(btn => {
         const t = (btn.getAttribute('data-filter-target') || '').trim().toLowerCase();
         let on = false;
         if (t === 'all') on = !hasRealActive();
         else if (t === 'reset') on = hasRealActive();
-        else on = targetMatch === 'single' ? activeTags === t : activeTags.has(t);
+        else on = activeTags.has(t);
         setButtonState(btn, on);
       });
     };
@@ -332,68 +313,43 @@ function movia_get_project_image_html($post_id) {
     // Init buttons
     buttons.forEach(btn => {
       if (!btn.hasAttribute('aria-controls')) btn.setAttribute('aria-controls', 'filter-list');
-      // initial paint for buttons (Tous ON)
       const t = (btn.getAttribute('data-filter-target') || '').trim().toLowerCase();
-      if (t === 'all') { setButtonState(btn, true); }
-      else { setButtonState(btn, false); }
+      setButtonState(btn, t === 'all'); // only "Tous" starts active
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         toggleTarget(btn.getAttribute('data-filter-target'));
-        recompute(); // global recompute after any change
+        recompute();
       });
     });
 
     return {
-      el: group,
-      targetMatch,
       nameMatch,
       getActiveDescriptor() {
-        // returns null if nothing meaningful, otherwise:
-        // { mode: 'single', tag: 'x' } or { mode: 'multi', tags: Set([...]) }
-        if (!hasRealActive()) return null;
-        if (targetMatch === 'single') return { mode: 'single', tag: activeTags };
-        return { mode: 'multi', tags: new Set(activeTags) };
+        if (!hasRealActive()) return null; // no effective filter
+        return { mode: 'multi', tags: new Set(activeTags) }; // OR within group
       }
     };
   });
 
-  // Global recompute: item must satisfy every group that has an active selection
+  // Apply filters
   function recompute() {
     items.forEach(el => {
       if (el._ft) clearTimeout(el._ft);
       const tokens = itemTokens.get(el);
 
-      // For every group that has active selection, check match
+      // Must pass all active groups (we have one)
       let visible = true;
       for (let i = 0; i < groups.length; i++) {
         const g = groups[i];
         const desc = g.getActiveDescriptor();
-        if (!desc) continue; // nothing selected in this group => ignore this group
-
-        if (g.nameMatch === 'single') {
-          // AND within group: must contain all selected (multi) or the single tag
-          if (desc.mode === 'single') {
-            if (!tokens.has(desc.tag)) { visible = false; break; }
-          } else {
-            for (const tag of desc.tags) {
-              if (tag === 'all') continue;
-              if (!tokens.has(tag)) { visible = false; break; }
-            }
-            if (!visible) break;
-          }
-        } else {
-          // OR within group: must contain any selected from this group
-          if (desc.mode === 'single') {
-            if (!tokens.has(desc.tag)) { visible = false; break; }
-          } else {
-            let any = false;
-            for (const tag of desc.tags) {
-              if (tag === 'all') continue;
-              if (tokens.has(tag)) { any = true; break; }
-            }
-            if (!any) { visible = false; break; }
-          }
+        if (!desc) continue; // no active selection => ignore
+        // OR logic within group
+        let any = false;
+        for (const tag of desc.tags) {
+          if (tag === 'all') continue;
+          if (tokens.has(tag)) { any = true; break; }
         }
+        if (!any) { visible = false; break; }
       }
 
       const cur = el.getAttribute('data-filter-status');
@@ -408,11 +364,10 @@ function movia_get_project_image_html($post_id) {
     });
   }
 
-  // Initial paint (all groups at Tous)
+  // Initial paint
   recompute();
 })();
 </script>
 
 <?php
 get_footer();
-?>
