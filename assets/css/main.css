@@ -587,7 +587,7 @@ ul{
     line-height: 0;
     width: 70px;
     height: 70px;
-    background: url('/wp-content/themes/mobamovia/img/check-orange-bg.png');
+    background: url('/wp-content/themes/moviamoba/img/check-orange-bg.png');
     background-repeat: no-repeat;
     background-position: top left;
     background-size: cover;
@@ -699,7 +699,7 @@ ul{
 }
 .div_temoig_home{
     padding: 40px;
-    background: url('/wp-content/themes/mobamovia/img/testimonials-bg.jpg');
+    background: url('/wp-content/themes/moviamoba/img/testimonials-bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
