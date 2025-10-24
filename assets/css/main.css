@@ -1266,6 +1266,8 @@ ul{
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 30px;
+    padding-top: 40px;
+    border-top: 2px solid #000;
 }
 .grid_events_boxes .event_box {
     width: 100% ;
