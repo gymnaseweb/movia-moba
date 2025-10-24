@@ -61,9 +61,12 @@ ul{
     border: 2px solid #FF5101;
     border-radius: 40px;
     display: inline-block;
+    box-shadow: none;
+    transition: all 0.3s ease-in-out;
 }
 .orange_btn:hover{
     border-color: #fff;
+    box-shadow: 0 0 10px -3px #aaa;
 }
 
 .white_button{
@@ -75,10 +78,13 @@ ul{
     border: 2px solid #fff;
     border-radius: 40px;
     display: inline-block;
+    box-shadow: none;
+    transition: all 0.3s ease-in-out;
 }
 .white_button:hover{
     color: #FF5101;
     border-color: #FF5101;
+    box-shadow: 0 0 10px -3px #aaa;
 }
 .ta_right{
     text-align: right;
