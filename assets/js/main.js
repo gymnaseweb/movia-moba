@@ -99,3 +99,29 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     tl.call(addHoverEffects, null, "+=1");
 });
+
+
+// Filter Toggle
+jQuery(function($) {
+  const $toggleBtn = $('.btn_toggle_filter');
+  const $filterWrap = $('.div_toggle_filter');
+  const $filters = $('.div_filtres');
+
+  let filterHeight = $filters.outerHeight();
+
+  $toggleBtn.on('click', function() {
+
+    $filterWrap.toggleClass('filter_closed');
+
+    if ($filterWrap.hasClass('filter_closed')) {
+      $filters.css('height', filterHeight); 
+      $filters[0].offsetHeight;
+      $filters.addClass('is_closed').css('height', 0);
+    } else {
+      $filters.removeClass('is_closed').css('height', filterHeight);
+      setTimeout(() => {
+        $filters.css('height', 'auto');
+      }, 400);
+    }
+  });
+});

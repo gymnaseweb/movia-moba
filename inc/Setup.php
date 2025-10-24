@@ -13,7 +13,8 @@ class Setup {
 
   public static function assets() {
     $ver = wp_get_theme()->get('Version');
-    wp_enqueue_style('movia', get_theme_file_uri('assets/css/main.css'), [], $ver);
-    wp_enqueue_script('movia', get_theme_file_uri('assets/js/main.js'), [], $ver, true);
+    wp_enqueue_style('movia-main-style', get_theme_file_uri('assets/css/main.css'), [], $ver);
+    wp_enqueue_script('jquery');
+    // wp_enqueue_script('movia-main-script', get_theme_file_uri('assets/js/main.js'), [], $ver, true);
   }
 }
