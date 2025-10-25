@@ -22,6 +22,11 @@ body {
   font-family: 'Inter', sans-serif;
 } */
 
+:root {
+  --moba_orange: #FF5101;
+}
+
+
 *{
     margin: 0;
     padding: 0;
@@ -56,9 +61,9 @@ ul{
     color: #fff;
     font-size: 22px;
     font-weight: 400;
-    background-color: #FF5101;
+    background-color:  var(--moba_orange);
     padding: 12px 30px;
-    border: 2px solid #FF5101;
+    border: 2px solid  var(--moba_orange);
     border-radius: 40px;
     display: inline-block;
     box-shadow: none;
@@ -72,7 +77,7 @@ ul{
 .white_button{
     color: #050505;
     font-size: 22px;
-    font-weight: 400;
+    /* font-weight: 400;
     background-color: #fff;
     padding: 12px 40px;
     border: 2px solid #fff;
@@ -80,14 +85,18 @@ ul{
     display: inline-block;
     box-shadow: none;
     transition: all 0.3s ease-in-out;
+    display: inline-block; */
 }
-.white_button:hover{
+/* .white_button:hover{
     color: #FF5101;
     border-color: #FF5101;
     box-shadow: 0 0 10px -3px #aaa;
 }
+} */
 .ta_right{
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
 }
 .d_flex{
     display: flex;
@@ -221,6 +230,7 @@ ul{
 .header_title, .header_lang a{
     font-size: 24px;
     font-weight: 600;
+    color:black;
 }
 .header_title{
     letter-spacing: 12px;
@@ -336,17 +346,37 @@ ul{
 
 
 /* === Home Page CSS === */
-.sec_banner_home{
+/* .sec_banner_home{
     padding: 40px 20px;
-}
+} */
 .div_banner_home{
     position: relative;
 }
+
+.hero_max_container{
+    width: 100%;
+    height: 100%;
+}
+
 .div_banner_home img{
     width: 100%;
-    max-height: 880px;
     object-fit: cover;
     border-radius: 25px;
+}
+
+.scaling-element__big-box .scaling-hero {
+  width: 101vw;
+  height: 101vh;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(0.001deg);
+  border-radius: 1em; /* keep your radius; it’s just hidden offscreen */
+}
+
+.scaling-element__small-box {
+  width: 100%;
+  max-width: 1700px;   /* ← your cap */
+  margin: 0 auto;      /* center it */
 }
 .banner_img_mob{
     display: none;
@@ -432,7 +462,6 @@ ul{
     padding: 30px 20px;
 }
 .div_nos_serv_home{
-    background-color: #83DCFF;
     border-radius: 25px;
     padding: 30px 30px 40px;
 }
@@ -447,7 +476,7 @@ ul{
     margin-top: 20px;
     margin-bottom: 40px;
 }
-.mid_nos_serv_home > p{
+.mid_nos_serv_home p{
     font-size: 44px;
     flex: 1;
 /*    max-width: 360px;*/
@@ -469,6 +498,104 @@ ul{
     font-size: 22px;
     margin: 20px auto 0;
     max-width: 200px;
+}
+
+/* Container */
+.resource-wrapper { position: relative; overflow: hidden; }
+
+/* Section 1: fullscreen area for the big hero */
+.scaling-element-header {
+  display: flex; flex-flow: column; justify-content: center; align-items: center;
+  min-height: 100vh; 
+  position: relative;
+}
+
+/* Section 2: content below, with the small destination box */
+.scaling-element-video {
+  display: flex; flex-flow: column; justify-content: center; align-items: center;
+  padding: 6vh 1vw; position: relative;
+}
+
+/* Big/Small boxes hold the aspect spacer + wrapper */
+.scaling-element__big-box,
+.scaling-element__small-box {
+  border-radius: 1em; width: 100%; position: relative;
+}
+.scaling-element__small-box { max-width: 1700px; }
+
+/* Flip wrapper fills its box */
+.scaling-hero__wrapper {
+  width: 100%; height: 100%;
+  position: absolute; inset: 0;
+}
+
+/* The moving target (your entire hero) */
+.scaling-hero {
+  will-change: transform;
+  border-radius: 1em;
+  position: absolute; inset: 0;
+  overflow: hidden; isolation: isolate;
+  transform: translateZ(0) rotate(0.001deg);
+  background: #000; /* helps hide edges during scaling */
+}
+
+/* Aspect ratio spacer */
+/* Fullscreen start: use viewport height to force full-screen presence */
+.scaling-hero__before { padding-top: 56.25%; } /* fallback 16:9 */
+.scaling-element__big-box .scaling-hero__before { padding-top: 100vh; } /* full screen */
+
+/* Your original hero content can stay as-is, but since it sits inside an
+   absolutely positioned scaling container, make sure it stretches nicely */
+.div_banner_home { position: relative; width: 100%; height: 100%; }
+
+/* Images fill the hero */
+.banner_img_desktop,
+.banner_img_mob {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; border-radius: inherit;
+}
+.banner_img_mob { display: none; }
+
+@media (max-width: 767px) {
+  .banner_img_desktop { display: none; }
+  .banner_img_mob { display: block; }
+}
+
+
+.banner_text a { pointer-events: auto; }
+
+/* Optional headline in section 2 */
+.scaling-element-header__h1 {
+  text-align: center; max-width: 9em; margin: 2rem 0 0;
+  font-size: clamp(2rem, 6vw, 7rem); font-weight: 500; line-height: 1;
+}
+
+/* Fixed, hidden by default */
+.main_header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  transform: translateY(-100%);
+  transition: transform 0.45s cubic-bezier(.22,.61,.36,1);
+  will-change: transform;
+  z-index: 1000; /* above content */
+}
+
+/* Visible when scrolling past threshold or when menu is open */
+.main_header.is-visible,
+.main_header.menu_open {
+  transform: translateY(0);
+}
+
+/* WP admin-bar offset */
+.admin-bar .main_header { top: 32px; }
+@media (max-width: 782px) {
+  .admin-bar .main_header { top: 46px; }
+}
+
+/* (Optional) reduce-motion */
+@media (prefers-reduced-motion: reduce) {
+  .main_header { transition: none; }
 }
 
 
@@ -619,7 +746,7 @@ ul{
     color: #fff;
     font-size: 44px;
     font-weight: 500;
-    background: #FF5101;
+    background:  var(--moba_orange);
     padding: 18px;
     text-align: center;
 }
@@ -678,7 +805,7 @@ ul{
     color: #fff;
     font-size: 55px;
     font-weight: 600;
-    background: #FF5101;
+    background:  var(--moba_orange);
     border-radius: 20px;
     padding: 15px 20px;
 
@@ -885,7 +1012,7 @@ ul{
     font-size: 24px;
 }
 .footer_content ul li a:hover{
-    color: #ff5101;
+    color:  var(--moba_orange);
 /*    text-decoration: underline;*/
 }
 .footer_content .footer_logo{
@@ -1523,7 +1650,7 @@ ul{
 }
 .div_prev_nxt a:hover{
     color: #fff;
-    background: #ff5101;
+    background:  var(--moba_orange);
 }
 
 
@@ -1598,7 +1725,7 @@ ul{
     transition: all 0.3s;
 }
 .camp_event_info h2:hover{
-    color: #FF5101;
+    color:  var(--moba_orange);
 }
 
 .sec_btn_plus_camp{
@@ -1617,7 +1744,7 @@ ul{
 }
 .div_btn_plus_camp a.btn_plus_camp:hover{
     color: #fff;
-    background: #FF5101;
+    background:  var(--moba_orange);
 }
 
 .sec_vid_camp_event{
@@ -2005,7 +2132,7 @@ ul{
     padding: 40px 20px 80px;
 }
 .div_restez_connect{
-    background: #FF5101;
+    background:  var(--moba_orange);
     border-radius: 25px;
     padding: 30px 40px;
 }
@@ -2073,7 +2200,7 @@ ul{
 .div_info_nous_joind .contact_orng_btn{
     font-size: 22px;
     color: #fff;
-    background: #FF5101;
+    background:  var(--moba_orange);
     display: inline-block;
     padding: 10px 20px;
     border-radius: 30px;
@@ -2154,9 +2281,9 @@ ul{
 .div_contact_form button{
     font-size: 22px;
     color: #fff;
-    background: #FF5101;
+    background:  var(--moba_orange);
     border-radius: 30px;
-    border: 1px solid #FF5101;
+    border: 1px solid  var(--moba_orange);
     padding: 10px 20px;
     min-width: 200px;
     cursor: pointer;
@@ -2217,7 +2344,7 @@ ul{
     font-size: 44px;
 }
 .div_a_propos .div_moba{
-    background: #FF5101;
+    background:  var(--moba_orange);
     margin-bottom: 20px;
 }
 .div_a_propos .div_movia{
@@ -2286,7 +2413,7 @@ ul{
     display: inline-block;
 }
 .div_notre_equipe ul li.active a{
-    background: #FF5101;
+    background:  var(--moba_orange);
 }
 
 .sec_profi_propo{
@@ -3357,4 +3484,185 @@ ul{
     .filter-btn{
         font-size: 14px;
     }
+}
+.sec_nos_serv_home {
+  position: relative;
+}
+
+.div_nos_serv_home {
+  position: relative;
+  /* give the whole block its final size; bg grows inside this box */
+  padding: 48px;
+  border-radius: 28px; /* matches the bg so corners line up */
+}
+
+/* Blue rectangle that we resize — sits UNDER the content */
+.div_nos_serv_home .bg {
+  position: absolute;
+  inset: 0;
+  background: #8dd6fb;        /* your blue */
+  border-radius: 28px;
+  z-index: 0;
+  width: 100%;                 /* we’ll animate with scaleX so width stays 100% */
+  transform-origin: right center;
+  transform: scaleX(0.58);     /* <- initial “smaller” state (tweak) */
+}
+
+/* Keep real content on top and unaffected */
+.div_nos_serv_home .content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Title should be hidden until bg reaches it: use a clip mask */
+.nos_serv_title {
+  display: block;
+  font-weight: 600;
+  font-size: clamp(28px, 3.2vw, 40px);
+  line-height: 1.1;
+  /* start fully clipped; JS animates this clip to reveal */
+  --clipRight: 100%;
+  clip-path: inset(0 var(--clipRight) 0 0);
+}
+
+.btn {
+  cursor: pointer;
+  border-radius: 1em;
+  border-radius: calc(var(--btn-height) * .5);
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-columns: 1fr;
+  justify-content: center;
+  align-items: center;
+  height: 3em;
+  padding-left: 1.25em;
+  padding-right: 1.25em;
+  text-decoration: none;
+  display: flex;
+  position: relative;
+  width: fit-content;
+}
+
+.btn__text {
+  color: #efede3;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+  position: relative;
+  transition: color 0.7s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+.btn-text-p {
+  color: currentColor;
+  white-space: nowrap;
+  margin-bottom: 0;
+  padding-bottom: .05em;
+  font-family: PP Neue Montreal, Arial, sans-serif;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.btn__bg {
+  background-color: #08181b;
+  border-radius: 1.5em;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.btn__image {
+  border-radius: 50%;
+  width: 2.25em;
+  height: 2.25em;
+  margin-left: -.75em;
+  margin-right: .5em;
+  position: relative;
+  overflow: hidden;
+}
+
+.img__founder {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.btn__circle-wrap {
+  border-radius: 1.5em;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.btn__circle {
+  pointer-events: none;
+  background-color: var(--moba_orange);;
+  border-radius: 50%;
+  width: 100%;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transition: transform 0.7s cubic-bezier(0.625, 0.05, 0, 1), background-color 0.4s cubic-bezier(0.625, 0.05, 0, 1);
+  transform: translate(-50%, -50%) scale(0) rotate(0.001deg);
+  background-color: #D1FD88;
+}
+
+.before__100 {
+  padding-top: 100%;
+  display: block;
+}
+
+.btn .btn__text {
+  transition: color 0.7s cubic-bezier(0.625, 0.05, 0, 1);
+}
+
+.btn:hover .btn__circle {
+  transform: translate(-50%, -50%) scale(1) rotate(0.001deg);
+}
+
+/* Light */
+.btn[data-theme="light"] .btn__bg {
+  background-color: white;
+}
+
+.btn[data-theme="light"] .btn__text {
+  color: #031819;
+}
+
+.btn[data-theme="light"] .btn__circle {
+  background-color: var(--moba_orange);;
+}
+
+/* Primary */
+.btn[data-theme="primary"] .btn__bg {
+  background-color: #D1FD88;
+}
+
+.btn[data-theme="primary"] .btn__text {
+  color: #031819;
+}
+
+.btn[data-theme="primary"] .btn__circle {
+  background-color: #b8ec6f;
+}
+
+/* The reveal window — the “invisible line” is the bottom edge */
+.sec_nos_serv_home .desc-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Prevent a flash before GSAP runs */
+.sec_nos_serv_home .desc-text {
+  transform: translateY(110%);
+  will-change: transform;
 }

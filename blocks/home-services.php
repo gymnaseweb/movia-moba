@@ -4,14 +4,16 @@ $attrs = get_block_wrapper_attributes(['class' => 'sec_nos_serv_home']);
 <section <?php echo $attrs; ?>>
   <div class="max_container ">
     <div class="div_nos_serv_home">
-      <?php
-        $title       = get_field('title');
-        $description = get_field('text');
-      ?>
+    <div class="bg" aria-hidden="true"></div>   <!-- blue rectangle behind -->
+    <div class="content">                        <!-- all your real content -->
+        <?php
+          $title       = get_field('title');
+          $description = get_field('text');
+        ?>
 
-      <?php if ($title !== ''): ?>
-        <span><?php echo esc_html($title); ?></span>
-      <?php endif; ?>
+        <?php if ($title !== ''): ?>
+          <span class="nos_serv_title"><?php echo esc_html($title); ?></span>
+        <?php endif; ?>
 
       <div class="mid_nos_serv_home">
         <?php if ($description !== ''): ?>
@@ -38,8 +40,19 @@ $attrs = get_block_wrapper_attributes(['class' => 'sec_nos_serv_home']);
       </div>
 
       <div class="ta_right">
-        <a class="white_button" href="/">Voir tous nos services</a>
+        <a data-theme="light" data-btn-hover href="/services" class="btn w-inline-block">
+          <div class="btn__bg"></div>
+          <div class="btn__circle-wrap">
+            <div class="btn__circle">
+              <div class="before__100"></div>
+            </div>
+          </div>
+          <div class="btn__text">
+            <p class="btn-text-p">Voir tous nos services</p>
+          </div>
+        </a>
       </div>
     </div>
+  </div>
   </div>
 </section>

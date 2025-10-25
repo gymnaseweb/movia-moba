@@ -22,10 +22,13 @@ add_action('wp_enqueue_scripts', function () {
     '3.12.2',
     ['in_footer' => true, 'strategy' => 'defer']
   );
+  wp_enqueue_script('gsap-scrolltrigger', 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', ['gsap'], null, true);
+  wp_enqueue_script('gsap-flip', 'https://cdn.jsdelivr.net/npm/gsap@3/dist/Flip.min.js', ['gsap'], null, true);
+
   wp_enqueue_script(
     'movia-main',
     get_theme_file_uri('assets/js/main.js'),
-    [],
+    ['gsap', 'gsap-scrolltrigger', 'gsap-flip'],
     null,
     ['in_footer' => true, 'strategy' => 'defer']
   );

@@ -55,3 +55,48 @@ tl.progress(0).pause().reversed(true);
 ham.addEventListener('click', () => {
   if (tl.reversed()) tl.play(); else tl.reverse();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const header = document.querySelector('.main_header');
+  if (!header) return;
+
+  // What counts as the "hero" you want to clear before showing header
+  // (pick the most specific you have; this matches your Flip hero)
+  const hero = document.querySelector('.sec_banner_home .scaling-element-header')
+            || document.querySelector('.sec_banner_home')
+            || document.body;
+
+  // If you have the WP admin bar, we’ll offset a bit to avoid clash
+  const ADMIN_BAR_OFFSET = document.body.classList.contains('admin-bar') ? 32 : 0;
+  const HEADER_REVEAL_OFFSET = 0; // tweak (+/- px) to show a bit earlier/later
+
+  let heroBottomY = 0;
+
+  const measure = () => {
+    const r = hero.getBoundingClientRect();
+    // absolute Y of hero's bottom in the document
+    heroBottomY = window.scrollY + r.bottom;
+  };
+
+  const onScroll = () => {
+    const y = window.scrollY || 0;
+    if (y >= heroBottomY - ADMIN_BAR_OFFSET - HEADER_REVEAL_OFFSET) {
+      header.classList.add('is-visible');
+    } else if (!header.classList.contains('menu_open')) {
+      // keep visible if menu is open
+      header.classList.remove('is-visible');
+    }
+  };
+
+  // init
+  header.classList.remove('is-visible');
+  measure();
+  onScroll();
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    // debounce-light
+    clearTimeout(measure._t);
+    measure._t = setTimeout(() => { measure(); onScroll(); }, 120);
+  });
+});
